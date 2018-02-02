@@ -1,0 +1,14 @@
+{
+  "name": "meme-creator",
+  "version": "0.0.0",
+  "description": "A test for creating Memes",
+  "author": null,
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "dependencies": {
+    "exp": "^49.1.0",
+    "expo": "^22.0.0",
+    "react": "16.0.0-beta.5",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-22.0.0.tar.gz"
+  }
+}
