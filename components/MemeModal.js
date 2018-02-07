@@ -1,12 +1,18 @@
 import React from 'react';
 import {
   Modal,
+  Alert,
+  Button,
+  CameraRoll,
+  Keyboard,
   Image,
   Text,
+  TextInput,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { takeSnapshotAsync } from 'expo';
 import PropTypes from 'prop-types';
 
 export default class MemeModal extends React.Component {
@@ -15,22 +21,62 @@ export default class MemeModal extends React.Component {
     closeMemeModal: PropTypes.func
   };
 
-  saveImage = () => {
-    
-  };
+  saveImage = async () => {
+    const result = await takeSnapshotAsync(this.memeRef, {
+      format: 'png',
+      result: 'file',
+    });
+    await CameraRoll.saveToCameraRoll(result, 'photo');
+    Alert.alert(
+      'Success',
+      'Meme Saved to the Gallery',
+      [
+        { text: 'Moar Memes!', onPress: () => this.props.closeMemeModal() },
+      ],
+      { cancelable: false }
+    );
+  }
+
+  setMemeRef = (ref) => {
+    this.memeRef = ref;
+  }
+
+  closeKeyboard = () => {
+    Keyboard.dismiss();
+  }
+
+  renderMemeTextInput = () => {
+    return (
+      <TextInput
+        autoCapitalize={'characters'}
+        multiline={true}
+        style={styles.memeText}
+        numberOfLines={2}
+        underlineColorAndroid={'transparent'}/>
+    );
+  }
 
   render() {
     return (
       <Modal animationType="slide" transparent={false}>
         <TouchableWithoutFeedback onPress={this.closeKeyboard}>
           <View style={styles.container}>
+            <Text style={styles.baseFont}>
+              Tap on the top and bottom of the image to add your Text. Then save your meme to the Gallery!
+            </Text>
             <View
               style={styles.memeContainer}
-              collapsable={false}>
+              collapsable={false}
+              ref={this.setMemeRef}>
               <Image
                 source={{ uri: this.props.photo.uri }}
                 style={styles.imageStyle}>
+                {this.renderMemeTextInput()}
+                {this.renderMemeTextInput()}
               </Image>
+            </View>
+            <View style={styles.buttons}>
+              <Button title="Save Meme" onPress={this.saveImage} />
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -50,11 +96,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20
   },
-  /*memeContainer: {
-    // I needed to add in a style to get this working. I don't know if this specific style is strictly needed or if the value needs to be this
-    // This is based on playing with: https://snack.expo.io/SJRvlSxvb
-    backgroundColor: '#ecf0f1',
-  },*/
   imageStyle: {
     width: 250,
     height: 350,
