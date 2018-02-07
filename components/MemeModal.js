@@ -1,13 +1,20 @@
 import React from 'react';
 import {
   Modal,
+  Image,
   Text,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 export default class MemeModal extends React.Component {
+  static propTypes = {
+    photo: PropTypes.object,
+    closeMemeModal: PropTypes.func
+  };
+
   saveImage = () => {
     
   };
@@ -17,7 +24,14 @@ export default class MemeModal extends React.Component {
       <Modal animationType="slide" transparent={false}>
         <TouchableWithoutFeedback onPress={this.closeKeyboard}>
           <View style={styles.container}>
-            <Text>This is where you will add text to your meme!</Text>
+            <View
+              style={styles.memeContainer}
+              collapsable={false}>
+              <Image
+                source={{ uri: this.props.photo.uri }}
+                style={styles.imageStyle}>
+              </Image>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
