@@ -1,12 +1,18 @@
 import React from 'react';
 import {
   Modal,
-  Image,
+  Alert,
+  Button,
+  CameraRoll,
+  Keyboard,
+  ImageBackground,
   Text,
+  TextInput,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { takeSnapshotAsync } from 'expo';
 import PropTypes from 'prop-types';
 
 export default class MemeEditor extends React.Component {
@@ -15,22 +21,62 @@ export default class MemeEditor extends React.Component {
     closeMemeModal: PropTypes.func
   };
 
-  saveImage = () => {
+  saveImage = async () => {
+    const result = await takeSnapshotAsync(this.memeRef, {
+      format: 'png',
+      result: 'file',
+    });
+    await CameraRoll.saveToCameraRoll(result, 'photo');
+    Alert.alert(
+      'Success',
+      'Meme Saved to the Gallery',
+      [
+        { text: 'Moar Memes!', onPress: () => this.props.closeMemeModal() },
+      ],
+      { cancelable: false }
+    );
+  }
 
-  };
+  setMemeRef = (ref) => {
+    this.memeRef = ref;
+  }
+
+  closeKeyboard = () => {
+    Keyboard.dismiss();
+  }
+
+  renderMemeTextInput = () => {
+    return (
+      <TextInput
+        autoCapitalize={'characters'}
+        multiline={true}
+        style={styles.memeText}
+        numberOfLines={2}
+        underlineColorAndroid={'transparent'}/>
+    );
+  }
 
   render = () => {
     return (
       <Modal animationType="slide" transparent={false}>
         <TouchableWithoutFeedback onPress={this.closeKeyboard}>
           <View style={styles.container}>
+            <Text style={styles.baseFont}>
+              Tap on the top and bottom of the image to add your Text. Then save your meme to the Gallery!
+            </Text>
             <View
               style={styles.memeContainer}
-              collapsable={false}>
-              <Image
+              collapsable={false}
+              ref={this.setMemeRef}>
+              <ImageBackground
                 source={{ uri: this.props.photo.uri }}
                 style={styles.imageStyle}>
-              </Image>
+                {this.renderMemeTextInput()}
+                {this.renderMemeTextInput()}
+              </ImageBackground>
+            </View>
+            <View style={styles.buttons}>
+              <Button title="Save Meme" onPress={this.saveImage} />
             </View>
           </View>
         </TouchableWithoutFeedback>
