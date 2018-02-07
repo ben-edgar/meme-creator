@@ -21,7 +21,7 @@ export default class MemeCreator extends React.Component {
   takePhoto = async () => {
     let img = await Expo.ImagePicker.launchCameraAsync();
     if (!img.cancelled) {
-      console.log(img);
+      this.setState({ photo: img, screen: memeScreen });
     }
   };
   
@@ -58,7 +58,7 @@ export default class MemeCreator extends React.Component {
           </View>
         );
       } else {
-        return <MemeEditor />;
+        return <MemeEditor photo={this.state.photo} />;
       }
     }
   }
