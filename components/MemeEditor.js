@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Modal,
   Keyboard,
+  Image,
   Text,
   View,
   StyleSheet,
@@ -36,6 +37,10 @@ export default class MemeEditor extends React.Component {
             <View
               collapsable={false}
               ref={this.setMemeRef}>
+              <Image
+                source={{ uri: this.props.photo.uri }}
+                style={styles.imageStyle}>
+              </Image>
             </View>
           </View>
         </TouchableWithoutFeedback>
