@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, Button, Platform, StyleSheet } from 'react-native';
 import MemeModal from './components/MemeModal';
-import { Permissions, ImagePicker } from 'expo';
+import Expo, { Permissions, ImagePicker } from 'expo';
 
 const welcomeScreen = "WELCOME";
 const memeScreen = "MEME";
@@ -18,8 +18,11 @@ export default class MemeCreator extends React.Component {
     this.setState({ hasCameraPermission: result1.status === 'granted' });
   }
   
-  takePhoto = () => {
-    
+  takePhoto = async () => {
+    let img = await Expo.ImagePicker.launchCameraAsync();
+    if (!img.cancelled) {
+      console.log(img);
+    }
   };
   
   getExternalStoragePermission = async () => {
@@ -49,6 +52,7 @@ export default class MemeCreator extends React.Component {
               Welcome to the MemeCreator! Lets build a meme.
             </Text>
             <Button
+              onPress={this.takePhoto}
               title={'Take a new picture'}/>
             { Platform.OS === 'ios' ? null : this.androidExternalStorageSection() }
           </View>
