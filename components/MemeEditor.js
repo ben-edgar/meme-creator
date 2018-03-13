@@ -1,8 +1,10 @@
 import React from 'react';
 import {
   Modal,
-  Image,
+  Keyboard,
+  ImageBackground,
   Text,
+  TextInput,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -19,18 +21,38 @@ export default class MemeEditor extends React.Component {
 
   };
 
+  closeKeyboard = () => {
+    Keyboard.dismiss();
+  }
+
+  renderMemeTextInput = () => {
+    return (
+      <TextInput
+        autoCapitalize={'characters'}
+        multiline={true}
+        style={styles.memeText}
+        numberOfLines={2}
+        underlineColorAndroid={'transparent'}/>
+    );
+  }
+
   render = () => {
     return (
       <Modal animationType="slide" transparent={false}>
         <TouchableWithoutFeedback onPress={this.closeKeyboard}>
           <View style={styles.container}>
+            <Text style={styles.baseFont}>
+              Tap on the top and bottom of the image to add your Text. Then save your meme to the Gallery!
+            </Text>
             <View
               style={styles.memeContainer}
               collapsable={false}>
-              <Image
+              <ImageBackground
                 source={{ uri: this.props.photo.uri }}
                 style={styles.imageStyle}>
-              </Image>
+                {this.renderMemeTextInput()}
+                {this.renderMemeTextInput()}
+              </ImageBackground>
             </View>
           </View>
         </TouchableWithoutFeedback>
