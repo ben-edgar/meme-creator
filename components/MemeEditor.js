@@ -1,6 +1,9 @@
 import React from 'react';
 import {
   Modal,
+  Alert,
+  Button,
+  CameraRoll,
   Keyboard,
   ImageBackground,
   Text,
@@ -9,6 +12,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { takeSnapshotAsync } from 'expo';
 import PropTypes from 'prop-types';
 
 export default class MemeEditor extends React.Component {
@@ -17,9 +21,25 @@ export default class MemeEditor extends React.Component {
     closeMemeModal: PropTypes.func
   };
 
-  saveImage = () => {
+  saveImage = async () => {
+    const result = await takeSnapshotAsync(this.memeRef, {
+      format: 'png',
+      result: 'file',
+    });
+    await CameraRoll.saveToCameraRoll(result, 'photo');
+    Alert.alert(
+      'Success',
+      'Meme Saved to the Gallery',
+      [
+        { text: 'Moar Memes!', onPress: () => this.props.closeMemeModal() },
+      ],
+      { cancelable: false }
+    );
+  }
 
-  };
+  setMemeRef = (ref) => {
+    this.memeRef = ref;
+  }
 
   closeKeyboard = () => {
     Keyboard.dismiss();
@@ -46,13 +66,17 @@ export default class MemeEditor extends React.Component {
             </Text>
             <View
               style={styles.memeContainer}
-              collapsable={false}>
+              collapsable={false}
+              ref={this.setMemeRef}>
               <ImageBackground
                 source={{ uri: this.props.photo.uri }}
                 style={styles.imageStyle}>
                 {this.renderMemeTextInput()}
                 {this.renderMemeTextInput()}
               </ImageBackground>
+            </View>
+            <View style={styles.buttons}>
+              <Button title="Save Meme" onPress={this.saveImage} />
             </View>
           </View>
         </TouchableWithoutFeedback>
